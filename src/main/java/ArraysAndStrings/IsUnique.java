@@ -3,6 +3,9 @@ package cracking.arraysAndStrings;
 import java.util.HashMap;
 import java.util.Scanner;
 
+// Problem :
+//   Implement an algorithm to determine if a string has all unique characters.
+
 class IsUnique {
   public static boolean isUnique(String string) {
     // create hash table
@@ -21,11 +24,11 @@ class IsUnique {
     return true;
   }
 
+  // interactive command-line program
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
     String input;
     while ((input = scanner.nextLine()).length() > 0) {
-      // String input = scanner.next();
       System.out.println(IsUnique.isUnique(input) ? "true" : "false");
     }
   }
