@@ -1,3 +1,5 @@
+package cracking.arraysAndStrings;
+
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -21,8 +23,9 @@ class IsUnique {
 
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
-    while (scanner.hasNext()) {
-      String input = scanner.next();
+    String input;
+    while ((input = scanner.nextLine()).length() > 0) {
+      // String input = scanner.next();
       System.out.println(IsUnique.isUnique(input) ? "true" : "false");
     }
   }
