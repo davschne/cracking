@@ -3,6 +3,9 @@ package cracking.arraysAndStrings;
 import java.util.HashMap;
 import java.util.Scanner;
 
+// Problem:
+// Given two strings, write a method to decide if one is a permutation of the other.
+
 public class CheckPermutation {
   public static boolean checkPermutation(String a, String b) {
     HashMap<Character, Integer> hash = new HashMap<>();
