@@ -6,7 +6,7 @@ import java.util.Scanner;
 // Problem :
 //   Implement an algorithm to determine if a string has all unique characters.
 
-class IsUnique {
+public class IsUnique {
   public static boolean isUnique(String string) {
     // create hash table
     // capacity based on char type
@@ -29,7 +29,7 @@ class IsUnique {
     Scanner scanner = new Scanner(System.in);
     String input;
     while ((input = scanner.nextLine()).length() > 0) {
-      System.out.println(IsUnique.isUnique(input) ? "true" : "false");
+      System.out.println(IsUnique.isUnique(input));
     }
   }
 }
