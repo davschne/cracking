@@ -51,42 +51,107 @@ fn one_added(a: &str, b: &str) -> bool {
     a_chars == b_chars
 }
 
+/**
+ * 1.6 String Compression: Implement a method to perform basic string compression using the counts of repeated characters. For example, the string aabcccccaaa would become a2b1c5a3. If the "compressed" string would not become smaller than the original string, your method should return the original string. You can assume the string has only uppercase and lowercase letters (a-z).
+ */
+pub fn compress_string(string: &str) -> String {
+    // If input empty, just return it.
+    if string.len() == 0 {
+        return String::from(string);
+    }
+
+    // Set up state machine.
+    let mut output = String::new();
+    let mut prev   = None;
+    let mut count  = 0;
+
+    // Iterate over characters, modifying the state machine as we go.
+    for ch in string.chars() {
+        match prev {
+            // If None, we're at the beginning of the sequence.
+            None => {
+                prev = Some(ch);
+                count = 1;
+            },
+            Some(prev_ch) => {
+                if ch == prev_ch {
+                    count += 1;
+                } else {
+                    output.push_str(&format!("{}{}", prev_ch, count));
+                    prev = Some(ch);
+                    count = 1;
+                }
+            },
+        }
+    }
+    output.push_str(&format!("{}{}", prev.unwrap(), count));
+
+    if output.len() >= string.len() {
+        String::from(string)
+    } else {
+        output
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    struct OneAwayTestCase {
-        a: &'static str,
-        b: &'static str,
-        expected: bool,
-    }
-
     #[test]
     fn test_one_away() {
+        struct TestCase {
+            a: &'static str,
+            b: &'static str,
+            expected: bool,
+        }
+
         let cases = vec![
-            OneAwayTestCase {
+            TestCase {
                 a: "pale",
                 b: "ple",
                 expected: true,
             },
-            OneAwayTestCase {
+            TestCase {
                 a: "pales",
                 b: "pale",
                 expected: true,
             },
-            OneAwayTestCase {
+            TestCase {
                 a: "pale",
                 b: "bale",
                 expected: true,
             },
-            OneAwayTestCase {
+            TestCase {
                 a: "pale",
                 b: "bake",
                 expected: false,
             }
         ];
-        for OneAwayTestCase { a, b, expected } in cases {
+        for TestCase { a, b, expected } in cases {
             assert_eq!(one_away(a, b), expected, "one_away({}, {}) != {}", a, b, expected);
+        }
+    }
+
+    #[test]
+    fn test_string_compression() {
+        struct TestCase {
+            input: &'static str,
+            expected: &'static str,
+        }
+
+        let cases = vec![
+            TestCase {
+                input: "aabcccccaaa",
+                expected: "a2b1c5a3",
+            },
+            TestCase {
+                input: "abc",
+                expected: "abc",
+            }
+        ];
+
+        for TestCase { input, expected } in cases {
+            assert_eq!(compress_string(input), expected, "compress_string(\"{}\") != \"{}\"", input, expected);
         }
     }
 }
