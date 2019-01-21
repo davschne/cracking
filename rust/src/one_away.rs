@@ -1,0 +1,92 @@
+/**
+ * 1.5 One Away: There are three types of edits that can be performed on strings: insert a character, remove a character, or replace a character. Given two strings, write a function to check if they are one edit (or zero edits) away.
+ * 
+ * Example
+ * pale, ple -> true
+ * pales, pale -> true
+ * pale, bale -> true
+ * pale, bake -> false
+ */
+pub fn one_away(a: &str, b: &str) -> bool {
+    let length_diff = (a.len() - b.len()) as i32;
+    
+    if length_diff == 0 {
+        // Compare strings character-wise and count the differences.
+        let num_chars_different = a.chars().zip(b.chars())
+            .fold(0, |acc, (a, b)| if a == b { acc } else { acc + 1 });
+        // Strings can differ by at most one character.
+        num_chars_different <= 1
+    } else if length_diff == 1 {
+        // `a` is one character longer. Check that removing first conflicting char from `a` renders the strings equal.
+        one_added(a, b)
+    } else if length_diff == -1 {
+        // `b` is one character longer. Check that removing first conflicting char from `b` renders the strings equal.
+        one_added(b, a)
+    } else {
+        // If the strings differ in length by more than a character, they are not one away.
+        false
+    }
+}
+
+/**
+ * Check that string `a` is the same as string `b` with one character inserted.
+ */
+fn one_added(a: &str, b: &str) -> bool {
+    let mut a_chars: Vec<char> = a.chars().collect();
+    let b_chars: Vec<char> = b.chars().collect();
+
+    // Find the index of the first conflicting char.
+    let added_char_index = a_chars.iter().enumerate()
+        .position(|(i, a_char)| {
+            match b_chars.get(i) {
+                Some(b_char) => b_char != a_char,
+                None => true,
+            }
+        })
+        .expect("invariant violation: there must be at least one character different");
+
+    // Remove the conflicting char.
+    a_chars.remove(added_char_index);
+
+    a_chars == b_chars
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    struct OneAwayTestCase {
+        a: &'static str,
+        b: &'static str,
+        expected: bool,
+    }
+
+    #[test]
+    fn test_one_away() {
+        let cases = vec![
+            OneAwayTestCase {
+                a: "pale",
+                b: "ple",
+                expected: true,
+            },
+            OneAwayTestCase {
+                a: "pales",
+                b: "pale",
+                expected: true,
+            },
+            OneAwayTestCase {
+                a: "pale",
+                b: "bale",
+                expected: true,
+            },
+            OneAwayTestCase {
+                a: "pale",
+                b: "bake",
+                expected: false,
+            }
+        ];
+        for OneAwayTestCase { a, b, expected } in cases {
+            assert_eq!(one_away(a, b), expected, "one_away({}, {}) != {}", a, b, expected);
+        }
+    }
+}
