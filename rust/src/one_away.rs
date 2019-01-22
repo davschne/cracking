@@ -65,15 +65,25 @@ pub fn compress_string(string: &str) -> String {
     let mut prev   = None;
     let mut count  = 0;
 
-    // Iterate over characters, modifying the state machine as we go.
-    for ch in string.chars() {
-        match prev {
-            // If None, we're at the beginning of the sequence.
-            None => {
+    // Create an iterator over characters.
+    let mut it = string.chars();
+
+    loop {
+        // Get the next character, if any.
+        let curr = it.next();
+        match (curr, prev) {
+            // The beginning of the sequence is the end of the sequence.
+            // Hence the input is an empty string.
+            (None, None) => break,
+
+            // Beginning of the sequence
+            (Some(ch), None) => {
                 prev = Some(ch);
                 count = 1;
             },
-            Some(prev_ch) => {
+
+            // Partway through the sequence
+            (Some(ch), Some(prev_ch)) => {
                 if ch == prev_ch {
                     count += 1;
                 } else {
@@ -82,10 +92,16 @@ pub fn compress_string(string: &str) -> String {
                     count = 1;
                 }
             },
+
+            // End of the sequence
+            (None, Some(prev_ch)) => {
+                output.push_str(&format!("{}{}", prev_ch, count));
+                break;
+            },
         }
     }
-    output.push_str(&format!("{}{}", prev.unwrap(), count));
 
+    // Check that the compression algorithm actually compressed the string.
     if output.len() >= string.len() {
         String::from(string)
     } else {
