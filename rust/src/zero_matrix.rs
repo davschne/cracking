@@ -25,7 +25,7 @@ impl Matrix {
 
     pub fn zero_matrix(&mut self) {
         // Form two vectors containing the row and column indices (respectively) of each 0-element.
-        let (zero_cols, zero_rows): (HashSet<_>, HashSet<_>) = self.rows.iter()
+        let (zero_cols, zero_rows): (HashSet<usize>, HashSet<usize>) = self.rows.iter()
             .flatten()
             .enumerate()
             .filter_map(|(index, val)| {
@@ -37,14 +37,24 @@ impl Matrix {
                 }
             })
             .unzip();
+        
+        let nonzero_rows = (0..self.height)
+            // convert range to set so we can compute the difference
+            .collect::<HashSet<usize>>()
+            .difference(&zero_rows)
+            // convert iter over &usize to iter over usize
+            .cloned()
+            // convert to vec so we can take slices
+            .collect::<Vec<usize>>();
 
         for row in zero_rows {
             self.rows[row] = vec![0; self.width];
         }
         
         for col in zero_cols {
-            for row in 0..self.height {
-                self.rows[row][col] = 0;
+            // Since we're inside a loop, we need a slice to avoid a move.
+            for row in &nonzero_rows[..] {
+                self.rows[*row][col] = 0;
             }
         }
     }
